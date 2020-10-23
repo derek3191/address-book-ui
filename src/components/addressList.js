@@ -84,9 +84,10 @@ export default class AddressList extends Component {
     formatAddressesForTable(addresses){
         let rows = [];
         addresses.forEach(a => {
+            let familyName = a.people.length > 0 ? `${a.people[0].lastName}, ${a.people[0].firstName}` : "";
             rows.push({
                 id: a._id,
-                family: `${a.people[0].lastName}, ${a.people[0].firstName}`,
+                family: familyName,
                 address: `${a.addressLine1} ${a.city} ${a.state}`,
                 groups: a.groups
             });
