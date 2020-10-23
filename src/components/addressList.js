@@ -1,5 +1,26 @@
 import React, { Component } from 'react'
-import { DataGrid } from '@material-ui/data-grid';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import PropTypes from 'prop-types';
+import clsx from 'clsx';
+import { lighten, makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TablePagination from '@material-ui/core/TablePagination';
+import TableRow from '@material-ui/core/TableRow';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
+import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 
 import AddressService from '../services/address';
 
@@ -12,10 +33,14 @@ export default class AddressList extends Component {
         this.state = {
             addresses: [],
             columns: [],
-            rows: []  
+            rows: [],
+            selectedGroup: null,
+            filteredName: '',
+            allGroups: [] 
         }
 
         this.getAllAddresses = this.getAllAddresses.bind(this);
+        this.getAllGroups = this.getAllGroups.bind(this);
     }
 
     componentDidMount(){
@@ -25,9 +50,14 @@ export default class AddressList extends Component {
             }))
             .then(() => {
                 this.setState({
-                    rows: this.formatAddressesForGrid(this.state.addresses)
+                    rows: this.formatAddressesForTable(this.state.addresses)
                 });
             });
+
+        this.getAllGroups()
+            .then(res => this.setState({
+                allGroups: res.data
+            }));
 
         this.setState({
             columns: [
@@ -43,17 +73,24 @@ export default class AddressList extends Component {
         });
     }
 
-    formatAddressesForGrid(addresses){
+    createData(address){
+        return {
+            id: address._id,
+            family: `${address.people[0].lastName}, ${address.people[0].firstName}`,
+            address: `${address.addressLine1} ${address.city} ${address.state}`,
+            groups: address.groups
+        }
+    }
+    formatAddressesForTable(addresses){
         let rows = [];
-        addresses.forEach(address => {
-            let row = {
-                id: address._id,
-                family: `${address.people[0].lastName}, ${address.people[0].firstName}`,
-                address: `${address.addressLine1}\r${address.city} ${address.state}`,
-                groups: address.groups
-            };
-            rows.push(row);
-        })
+        addresses.forEach(a => {
+            rows.push({
+                id: a._id,
+                family: `${a.people[0].lastName}, ${a.people[0].firstName}`,
+                address: `${a.addressLine1} ${a.city} ${a.state}`,
+                groups: a.groups
+            });
+        });
         return rows;
     }
 
@@ -61,10 +98,64 @@ export default class AddressList extends Component {
        return AddressService.prototype.getAllAddresses();
     }
 
+    getAllGroups(){
+        return AddressService.prototype.getAllGroups();
+    }
+
+    onChangeGroup = (event) =>{
+        this.setState({
+            selectedGroup: event.target.value
+        });
+    };
+
     render() {
         return (
             <div id="address-grid" style={{ height: 300, width: '100%' }}>
-                <DataGrid  rowHeight="100" rows={this.state.rows} columns={this.state.columns} />
+                <TextField  id="standard-basic" label="Name" />
+                <Select
+                    native
+                    value={this.state.selectedGroup}
+                    onChange={this.onChangeGroup}
+                >
+                    
+                    <option aria-label="None" value="" />
+                    {this.state.allGroups.map(group => <option value={group}>{group}</option>)}
+                </Select>
+                <TableContainer>
+                    <Table>
+                        <TableBody>
+                            {this.state.rows.map((row, index) => {
+                                const labelId = `enhanced-table-checkbox-${index}`;
+
+                                return(
+                                    <div>
+                                        <TableRow>
+                                            <TableCell padding="checkbox">
+                                                <Checkbox
+                                                checked='false'
+                                                inputProps={{ 'aria-labelledby': labelId }}
+                                                />
+                                            </TableCell>
+                                            <TableCell>
+                                                <Button color="secondary" variant="contained" onClick="{() => { alert('clicked') }}">View People</Button>
+                                            </TableCell>
+                                            <TableCell component="th" id={labelId} scope="row" padding="none">
+                                                {row.family}
+                                            </TableCell>
+                                            <TableCell align="right">{row.address}</TableCell>
+                                            <TableCell align="left">
+                                                <ul>
+                                                    {row.groups.map((group, index) => <li key={index}>{group}</li>)}
+                                                </ul>
+                                            </TableCell>
+                                        </TableRow>
+                                    </div>
+                                )
+
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>    
             </div>
         )
     }
