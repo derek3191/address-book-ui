@@ -1,9 +1,11 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import App from '../App';
 
-test('renders learn react link', () => {
+  afterEach(cleanup);
+
+test('page loads with title', () => {
   const { getByText } = render(<App />);
-  const linkElement = getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+  const titleElement = getByText(/address book/i);
+  expect(titleElement).toBeInTheDocument();
+})
