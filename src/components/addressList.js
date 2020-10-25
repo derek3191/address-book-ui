@@ -11,6 +11,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import AddressService from '../services/address';
 
+import AddressForm from './addressForm';
 
 export default class AddressList extends Component {
 
@@ -23,11 +24,15 @@ export default class AddressList extends Component {
             rows: [],
             selectedGroup: null,
             filteredName: '',
-            allGroups: [] 
+            allGroups: [],
+            selectedAddress: null
         }
 
         this.getAllAddresses = this.getAllAddresses.bind(this);
         this.getAllGroups = this.getAllGroups.bind(this);
+        this.viewPeopleClick = this.viewPeopleClick.bind(this);
+        
+
     }
 
     componentDidMount(){
@@ -68,6 +73,7 @@ export default class AddressList extends Component {
             groups: address.groups
         }
     }
+    
     formatAddressesForTable(addresses){
         let rows = [];
         addresses.forEach(a => {
@@ -96,6 +102,15 @@ export default class AddressList extends Component {
         });
     };
 
+    viewPeopleClick(address) {
+        this.setState({
+            selectedAddress: address
+        },
+        () => {
+            console.log(`addressid = ${this.state.selectedAddress.addressLine1}`);
+        });
+    }
+
     render() {
         return (
             <div id="address-grid" style={{ height: 300, width: '100%' }}>
@@ -109,11 +124,15 @@ export default class AddressList extends Component {
                     <option aria-label="None" value="" />
                     {this.state.allGroups.map(group => <option value={group}>{group}</option>)}
                 </Select>
+                
+                address is {this.state.selectedAddress && <AddressForm address={this.state.selectedAddress }/>}
                 <TableContainer>
                     <Table>
                         <TableBody>
-                            {this.state.rows.map((row, index) => {
+                            {this.state.addresses.map((row, index) => {
                                 const labelId = `enhanced-table-checkbox-${index}`;
+                                const familyName = row.people.length > 0 ? `${row.people[0].lastName}, ${row.people[0].firstName}` : "";
+                                const address = `${row.addressLine1} ${row.city} ${row.state}`;
 
                                 return(
                                     <div>
@@ -125,12 +144,12 @@ export default class AddressList extends Component {
                                                 />
                                             </TableCell>
                                             <TableCell>
-                                                <Button color="secondary" variant="contained" onClick="{() => { alert('clicked') }}">View People</Button>
+                                                <Button color="secondary" variant="contained" onClick={this.viewPeopleClick.bind(this, row)}>View People</Button>
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
-                                                {row.family}
+                                                {familyName}
                                             </TableCell>
-                                            <TableCell align="right">{row.address}</TableCell>
+                                            <TableCell align="right">{address}</TableCell>
                                             <TableCell align="left">
                                                 <ul>
                                                     {row.groups.map((group, index) => <li key={index}>{group}</li>)}
@@ -143,7 +162,16 @@ export default class AddressList extends Component {
                             })}
                         </TableBody>
                     </Table>
-                </TableContainer>    
+                </TableContainer>   
+                <br/>
+                <br/>
+
+                {/* {
+                    this.state.selectedAddress !== null 
+                    ? <AddressForm addressID={this.state.selectedAddress.id}/>
+                    : <AddressForm/>
+
+                } */}
             </div>
         )
     }

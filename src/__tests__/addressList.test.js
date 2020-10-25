@@ -1,6 +1,5 @@
 import React from 'react'
 import { fireEvent, cleanup } from '@testing-library/react';
-import AddressList from '../components/addressList';
 import address from '../services/address';
 
 require('dotenv').config();
