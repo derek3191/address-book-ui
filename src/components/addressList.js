@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
+import Collapse from '@material-ui/core/Collapse';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -12,6 +13,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import AddressService from '../services/address';
 
 import AddressForm from './addressForm';
+import PersonForm from './personForm';
+import Filter from './addressListFilter';
 
 export default class AddressList extends Component {
 
@@ -96,6 +99,10 @@ export default class AddressList extends Component {
         return AddressService.prototype.getAllGroups();
     }
 
+    getAllAddressesByFilter(filter){
+        return AddressService.prototype.getAllAddressesByFilter(filter);
+    }
+
     onChangeGroup = (event) =>{
         this.setState({
             selectedGroup: event.target.value
@@ -112,20 +119,29 @@ export default class AddressList extends Component {
     }
 
     render() {
+        const eventHandler = data => {
+            //console.log(`data is ${data}`);
+            if (data !== undefined){
+                console.log(data);// is ${data}`)
+                this.getAllAddressesByFilter(data)
+                //this.getAllAddressesByName(data.name)
+                    .then(res => this.setState({
+                        addresses: res.data
+                    }))
+                    .then(() => {
+                        this.setState({
+                            rows: this.formatAddressesForTable(this.state.addresses)
+                        });
+                    })
+                    .catch(err => {
+                        console.log("there was an error");
+                    });
+            }
+        }
         return (
             <div id="address-grid" style={{ height: 300, width: '100%' }}>
-                <TextField  id="standard-basic" label="Name" />
-                <Select
-                    native
-                    value={this.state.selectedGroup}
-                    onChange={this.onChangeGroup}
-                >
-                    
-                    <option aria-label="None" value="" />
-                    {this.state.allGroups.map(group => <option value={group}>{group}</option>)}
-                </Select>
-                
-                address is {this.state.selectedAddress && <AddressForm address={this.state.selectedAddress }/>}
+
+                <Filter allGroups={this.state.allGroups} onChange={eventHandler}/>
                 <TableContainer>
                     <Table>
                         <TableBody>
@@ -163,15 +179,6 @@ export default class AddressList extends Component {
                         </TableBody>
                     </Table>
                 </TableContainer>   
-                <br/>
-                <br/>
-
-                {/* {
-                    this.state.selectedAddress !== null 
-                    ? <AddressForm addressID={this.state.selectedAddress.id}/>
-                    : <AddressForm/>
-
-                } */}
             </div>
         )
     }

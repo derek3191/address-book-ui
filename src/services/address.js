@@ -16,6 +16,22 @@ export default class AddressService {
         }
     }
 
+    async getAllAddressesByName(name){
+        try{
+            return await axios.get(`http://localhost:3001/api/address/person?name=${name}`)
+        } catch (error){
+            console.log(error);
+        }
+    }
+
+    async getAllAddressesByFilter(filter){
+        try{
+            return await axios.post('http://localhost:3001/api/address/filter/', filter);
+        } catch (error){
+            console.log(error);
+        }
+    }
+
     async getAllGroups() {
         try { 
             return await axios.get('http://localhost:3001/api/address/groups')
