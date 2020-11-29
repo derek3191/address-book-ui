@@ -1,20 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 
+import { BrowserRouter as Router, Route } from "react-router-dom";
+
 import AddressList from './components/addressList';
+import PersonForm from './components/personForm';
 
 require('dotenv').config();
 
 function App() {
   return (
-    <div className="App">
+    // <div className="App">
+    //   <header>
+    //     Address Book
+    //   </header>
+
+    //   <AddressList />
+    // </div>
+
+    <Router>
       <header>
         Address Book
       </header>
 
-      <AddressList />
-    </div>
+      <Route path="/" exact component={AddressList} />
+      <Route path="/person/:id?">
+        <PersonForm />
+      </Route>
+    </Router>  
   );
 }
 

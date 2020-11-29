@@ -16,6 +16,8 @@ import AddressForm from './addressForm';
 import PersonForm from './personForm';
 import Filter from './addressListFilter';
 
+import { Link } from "react-router-dom";
+
 export default class AddressList extends Component {
 
     constructor(){
@@ -114,17 +116,15 @@ export default class AddressList extends Component {
             selectedAddress: address
         },
         () => {
+            
             console.log(`addressid = ${this.state.selectedAddress.addressLine1}`);
         });
     }
 
     render() {
         const eventHandler = data => {
-            //console.log(`data is ${data}`);
             if (data !== undefined){
-                console.log(data);// is ${data}`)
                 this.getAllAddressesByFilter(data)
-                //this.getAllAddressesByName(data.name)
                     .then(res => this.setState({
                         addresses: res.data
                     }))
@@ -134,7 +134,7 @@ export default class AddressList extends Component {
                         });
                     })
                     .catch(err => {
-                        console.log("there was an error");
+                        console.log("there was an error filtering addresses");
                     });
             }
         }
@@ -142,6 +142,8 @@ export default class AddressList extends Component {
             <div id="address-grid" style={{ height: 300, width: '100%' }}>
 
                 <Filter allGroups={this.state.allGroups} onChange={eventHandler}/>
+                <br/>
+                <Button color="secondary" variant="contained" href="/person">Add New Address</Button>
                 <TableContainer>
                     <Table>
                         <TableBody>
@@ -160,7 +162,7 @@ export default class AddressList extends Component {
                                                 />
                                             </TableCell>
                                             <TableCell>
-                                                <Button color="secondary" variant="contained" onClick={this.viewPeopleClick.bind(this, row)}>View People</Button>
+                                                    <Button color="secondary" variant="contained" href={`/person/${row._id}`}>View People</Button>
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {familyName}

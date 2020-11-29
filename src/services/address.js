@@ -7,6 +7,17 @@ export default class AddressService {
         };
     }
 
+    getToken() {
+       return axios.CancelToken.source();
+    }
+
+    async getAddressById(id) {
+        try {
+            return await axios.get(`http://localhost:3001/api/address/${id}`);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     async getAllAddresses() {
         try {
