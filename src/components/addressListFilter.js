@@ -16,7 +16,7 @@ export default function Filter(props){
         if (props.onChange){
             props.onChange(filterData);
         }
-    }, [filterData, props]);
+    }, [filterData.name, filterData.address]);
     return (
         <div>
             <TextField  id="standard-basic" name="name" label="Name" onChange={handleChange}/>
