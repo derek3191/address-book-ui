@@ -16,6 +16,7 @@ export default class AddressService {
             return await axios.get(`http://localhost:3001/api/address/${id}`);
         } catch (error) {
             console.log(error);
+            return null;
         }
     }
 
