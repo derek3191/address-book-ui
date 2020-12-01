@@ -98,11 +98,11 @@ export default class AddressList extends Component {
         return AddressService.prototype.getAllAddressesByFilter(filter);
     }
 
-    onChangeGroup = (event) =>{
-        this.setState({
-            selectedGroup: event.target.value
-        });
-    };
+    // onChangeGroup = (event) =>{
+    //     this.setState({
+    //         selectedGroup: event.target.value
+    //     });
+    // };
 
     viewPeopleClick(address) {
         this.setState({
@@ -150,12 +150,12 @@ export default class AddressList extends Component {
                                         <TableRow>
                                             <TableCell padding="checkbox">
                                                 <Checkbox
-                                                checked='false'
+                                                
                                                 inputProps={{ 'aria-labelledby': labelId }}
                                                 />
                                             </TableCell>
                                             <TableCell>
-                                                    <Button color="secondary" variant="contained" href={`/person/${row._id}`}>View People</Button>
+                                                    <Button color="secondary" variant="contained" href={`/person/${row._id}`}>View Address</Button>
                                             </TableCell>
                                             <TableCell component="th" id={labelId} scope="row" padding="none">
                                                 {familyName}

@@ -53,4 +53,16 @@ export default class AddressService {
             console.log(error);
         }
     }
+
+    async updateAddress(address){
+        try {
+            return await axios.put(`http://localhost:3001/api/address/${address._id}`, address);
+        } catch (error) {
+            console.log(error);
+            if (error.response.status === 500){
+                return error.response;
+            }
+            return null;
+        }
+    }
 }
